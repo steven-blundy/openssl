@@ -332,13 +332,13 @@ func (c *Conn) PeerCertificate() (*Certificate, error) {
 
 // loadCertificateStack loads up a stack of x509 certificates and returns them,
 // handling memory ownership.
-func (c *Conn) loadCertificateStack(sk *C.struct_stack_st_X509) (
+func (c *Conn) loadCertificateStack(sk *stackOfX509) (
 	rv []*Certificate) {
 
-	sk_num := int(C.X_sk_X509_num(sk))
+	sk_num := sk.num()
 	rv = make([]*Certificate, 0, sk_num)
 	for i := 0; i < sk_num; i++ {
-		x := C.X_sk_X509_value(sk, C.int(i))
+		x := sk.value(i)
 		// ref holds on to the underlying connection memory so we don't need to
 		// worry about incrementing refcounts manually or freeing the X509
 		rv = append(rv, &Certificate{x: x, ref: c})
@@ -360,7 +360,7 @@ func (c *Conn) PeerCertificateChain() (rv []*Certificate, err error) {
 	if sk == nil {
 		return nil, errors.New("no peer certificates found")
 	}
-	return c.loadCertificateStack(sk), nil
+	return c.loadCertificateStack(asStackOfX509(sk)), nil
 }
 
 type ConnectionState struct {

@@ -761,6 +761,18 @@ X509 *X_sk_X509_value(STACK_OF(X509)* sk, int i) {
    return sk_X509_value(sk, i);
 }
 
+STACK_OF(X509) *X_sk_X509_new_null() {
+    return sk_X509_new_null();
+}
+
+int X_sk_X509_push(STACK_OF(X509)* sk, X509 *x) {
+    return sk_X509_push(sk, x);
+}
+
+void X_sk_X509_free(STACK_OF(X509) *sk) {
+    sk_X509_free(sk);
+}
+
 long X_X509_get_version(const X509 *x) {
 	return X509_get_version(x);
 }

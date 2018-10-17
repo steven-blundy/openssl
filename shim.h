@@ -165,6 +165,9 @@ extern const ASN1_TIME *X_X509_get0_notBefore(const X509 *x);
 extern const ASN1_TIME *X_X509_get0_notAfter(const X509 *x);
 extern int X_sk_X509_num(STACK_OF(X509) *sk);
 extern X509 *X_sk_X509_value(STACK_OF(X509)* sk, int i);
+extern STACK_OF(X509) *X_sk_X509_new_null();
+extern int X_sk_X509_push(STACK_OF(X509)* sk, X509 *x);
+extern void X_sk_X509_free(STACK_OF(X509) *sk);
 extern long X_X509_get_version(const X509 *x);
 extern int X_X509_set_version(X509 *x, long version);
 
