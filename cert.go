@@ -111,6 +111,23 @@ func (n *Name) AddTextEntries(entries map[string]string) error {
 	return nil
 }
 
+// GetEntryCount returns the number of entries in the name
+func (n *Name) GetEntryCount() int {
+	return int(C.X509_NAME_entry_count(n.name))
+}
+
+// GetEntryNID returns the NID of the entry at position i. If i is out of range, (NID_undef, false) is returned
+func (n *Name) GetEntryNID(i int) (NID, bool) {
+	entry := C.X509_NAME_get_entry(n.name, C.int(i))
+	if entry == nil {
+		return NID_undef, false
+	}
+	obj := C.X509_NAME_ENTRY_get_object(entry)
+	nid := int(C.OBJ_obj2nid(obj))
+
+	return NID(nid), true
+}
+
 // GetEntry returns a name entry based on NID.  If no entry, then ("", false) is
 // returned.
 func (n *Name) GetEntry(nid NID) (entry string, ok bool) {

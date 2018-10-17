@@ -138,6 +138,68 @@ func TestCertGetNameEntry(t *testing.T) {
 	}
 }
 
+func TestCertGetNameNID(t *testing.T) {
+	key, err := GenerateRSAKey(768)
+	if err != nil {
+		t.Fatal(err)
+	}
+	info := &CertificateInfo{
+		Serial:       big.NewInt(int64(1)),
+		Issued:       0,
+		Expires:      24 * time.Hour,
+		Country:      "US",
+		Organization: "Test",
+		CommonName:   "localhost",
+	}
+	cert, err := NewCertificate(info, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	name, err := cert.GetSubjectName()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count := name.GetEntryCount()
+
+	if count != 3 {
+		t.Errorf("Entry count incorrect:%v", count)
+	}
+
+	seen := make(map[NID]bool, 3)
+
+	for i := 0; i < count; i++ {
+		nid, ok := name.GetEntryNID(i)
+		if !ok {
+			t.Fatal("no common name")
+		}
+		seen[nid] = true
+
+		value, ok := name.GetEntry(nid)
+
+		switch nid {
+		case NID_commonName:
+			if value != "localhost" {
+				t.Errorf("expected localhost; got %q", value)
+			}
+		case NID_organizationName:
+			if value != "Test" {
+				t.Errorf("expected Test; got %q", value)
+			}
+		case NID_countryName:
+			if value != "US" {
+				t.Errorf("expected US; got %q", value)
+			}
+		default:
+			t.Errorf("Unexpected NID:%v=%v", nid, value)
+		}
+	}
+
+	if len(seen) != 3 {
+		t.Errorf("Missing entries:%v", len(seen))
+	}
+}
+
 func TestCertVersion(t *testing.T) {
 	key, err := GenerateRSAKey(768)
 	if err != nil {
