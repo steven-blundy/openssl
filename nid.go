@@ -198,6 +198,8 @@ const (
 	NID_ad_ca_issuers                      NID = 179
 	NID_OCSP_sign                          NID = 180
 	NID_X9_62_id_ecPublicKey               NID = 408
+	NID_streetAddress                      NID = 660
+	NID_postalCode                         NID = 661
 	NID_hmac                               NID = 855
 	NID_cmac                               NID = 894
 	NID_dhpublicnumber                     NID = 920
